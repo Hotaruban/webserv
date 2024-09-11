@@ -1,40 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Settings.hpp                                       :+:      :+:    :+:   */
+/*   helper.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ychen2 <ychen2@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/02 22:05:06 by ychen2            #+#    #+#             */
-/*   Updated: 2024/06/20 01:10:01 by ychen2           ###   ########.fr       */
+/*   Created: 2024/08/25 21:12:13 by ychen2            #+#    #+#             */
+/*   Updated: 2024/08/25 21:13:35 by ychen2           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <cstring>
-#include <exception>
-#include <fstream>
-#include <iostream>
 #include <map>
-#include <netinet/in.h>
-#include <sstream>
+#include <cctype>
+#include <iostream>
 #include <string>
-#include <sys/socket.h>
 #include <vector>
+#include <cstdlib>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sstream>
+#include <fstream>
+#include <exception>
 
-#include "LocationConfig.hpp"
-#include "ServerConfig.hpp"
-
-class Settings {
-public:
-	Settings(const ServerConfig &server);
-	std::string getListen() const;
-	void addServer(const ServerConfig &server);
-	friend class Server;
-
-private:
-	int _socket_fd;
-	struct sockaddr_in _addr;
-	std::vector< ServerConfig > _servers;
-};
+std::string getMimeType(const std::string& fileName);
+std::vector<std::string> split(const std::string &str, char delimiter);
+std::string find_cgi_path(const std::string &program);

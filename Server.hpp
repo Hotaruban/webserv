@@ -3,90 +3,81 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu <yu@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: ychen2 <ychen2@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 22:00:02 by ychen2            #+#    #+#             */
-/*   Updated: 2024/05/30 19:12:59 by yu               ###   ########.fr       */
+/*   Updated: 2024/09/09 18:55:12 by ychen2           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <vector>
-#include <exception>
-#include <sys/epoll.h>
+#include "MiddleStages.hpp"
 #include "Settings.hpp"
-#define BUFFER_SIZE 80
+#include "State.hpp"
+#include <algorithm>
+#include <cstdio>
+#include <exception>
+#include <iostream>
+#include <poll.h>
+#include <unistd.h>
+#include <utility>
+#include <vector>
+#include <list>
+
+#ifdef __APPLE__
+#include <fcntl.h>
+#endif
+
+#define BUFFER_SIZE 2
 #define BACK_LOG 32
 #define MAX_EVENTS 16
+#define CGI_TIMEOUT 2
+#define EVENT_TIMEOUT 100
+#define SERVER_TIMEOUT 500
 
 class Server {
 
-	public:
-		//Constructer, it creates the non-blocking epoll instance, listen to the ip/port from settings
-		//	calling epoll_create, socket, setsockopt, bind, listen, epoll_ctl
-		Server(std::vector<Settings> & servers);
-		~Server();
-		//member methods
+public:
+  // Constructer, it creates the non-blocking socket connection, listen to the
+  // ip/port from settings 	calling socket, setsockopt, bind, listen
+  //   put socket fds into pfs
+  Server(std::vector<Settings> &servers, char **env);
+  ~Server();
 
-		//	Start waiting for events
-		//		calling epoll_wait, accept, recv, send
-		void	run();
+  // getters
+  std::vector<struct pollfd>::iterator getNextPfdsEnd();
+  char **get_env();
+  // member methods
+  void close_conn(std::list<State>::iterator &cur_state);
+  void new_conns(int sock_fd);
+  void add_to_poll_in(int fd);
+  void add_to_poll_out(int fd);
+  std::vector<struct pollfd>::iterator find_it_in_nxt(int fd);
+  void getServerConfig(State &);
+  void remove_from_poll(int fd);
 
-		//exceptions
-		class AlreadyConstructed: public std::exception {
-			public:
-				//The server instance is already constructed.
-				virtual const char* what() const throw();
-		};
-		class CreatEpollFail: public std::exception {
-			public:
-				//epoll_create() failed
-				virtual const char* what() const throw();
-		};
-		class EpollCtlFail: public std::exception {
-			public:
-				//epoll_ctl() failed
-				virtual const char* what() const throw();
-		};
-		class EpollWaitFail: public std::exception {
-			public:
-				//epoll_wait() failed
-				virtual const char* what() const throw();
-		};
-		class SocketFail: public std::exception {
-			public:
-				//socket() failed
-				virtual const char* what() const throw();
-		};
-		class SetSockOptFail: public std::exception {
-			public:
-				//setsockopt() failed
-				virtual const char* what() const throw();
-		};
-		class BindFail: public std::exception {
-			public:
-				//bind() failed
-				virtual const char* what() const throw();
-		};
-		class ListenFail: public std::exception {
-			public:
-				//listen() failed
-				virtual const char* what() const throw();
-		};
-		class AcceptFail: public std::exception {
-			public:
-				//accept() failed
-				virtual const char* what() const throw();
-		};
+  //	Start waiting for events
+  //		calling poll, accept, recv, send
+  void run();
 
-	private:
-		static bool				_constructed;
-		int						_epoll_fd;
-		std::vector<int>		_socks_fd;
-		std::vector<Settings> &	_settings;
-	
+private:
+  char **_env;
+  static bool _constructed;
+  std::vector<int> _socks_fd;
+  std::vector<struct pollfd> _cur_poll_fds;
+  std::vector<struct pollfd> _next_poll_fds;
+  std::vector<Settings> &_settings;
+  std::list<State> _states;
+
+  // funcs
+
+  bool is_socket(int fd);
+  std::list<State>::iterator getState(int fd);
+
+  void run_a_server(
+      std::vector<Settings>::iterator &); // socket, setsockopt, bind, listen
+
+  void checkTimeoutCGI();
+  void checkTimeoutConn();
 };
-
-// std::string processRequest(std::string request, std::vector<ServerConfig> settings, unsigned char * client_ip)
-

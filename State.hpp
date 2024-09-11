@@ -6,21 +6,60 @@
 /*   By: ychen2 <ychen2@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 14:14:22 by yu                #+#    #+#             */
-/*   Updated: 2024/06/20 01:21:36 by ychen2           ###   ########.fr       */
+/*   Updated: 2024/09/08 18:18:29 by ychen2           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <string>
+#include "LocationConfig.hpp"
+#include "Request.hpp"
+#include "Response.hpp"
+#include "MiddleStages.hpp"
+#include "ServerConfig.hpp"
+#include <stdint.h>
+#include <ctime>
+#include <list>
 
-typedef struct s_state {
-	// If the size of buffer is too large, we can consider to put this into a external file
-	std::string			buffer;
-	bool				sent;
-	unsigned char *		client_ip;
-	// std::ifstream		file;
-} t_state;
+class State {
+public:
+  State(int fd, uint32_t client_addr, int socket);
 
-void	fill_write_buffer(t_state *state, std::string const &response);
-// std::string processRequest(std::string request, std::vector<ServerConfig> settings, unsigned char * client_ip)
+  void reset_attrs();
+  void setup_cgi();
+
+  bool        isFinishHeaders;
+  pid_t       cgiPID;
+  size_t      bodyPos;
+  size_t      contentLength;
+  std::string request_buff;
+  std::string file_buff;
+  std::string cgi_buff;
+
+  std::string response_buff;
+  long bytes_sent;
+
+  std::string original_path; // to call open
+  std::string file_path; // to call open
+  std::string cgi_path; // to call execve
+
+  Request req;
+  Response res;
+
+  std::string client_ip_str;
+
+  int cgi_pipe_r[2], cgi_pipe_w[2];
+  int sock_fd, conn_fd, file_fd;
+  void (*stage)(std::list<State>::iterator &, const struct pollfd &, Server &);
+
+
+  ServerConfig  server;
+  LocationConfig  loc;
+
+  std::time_t timeCGI;
+  std::time_t timeEvent;
+  bool        isCGIrunning;
+
+  // for debug:
+  unsigned int event_ct;
+};

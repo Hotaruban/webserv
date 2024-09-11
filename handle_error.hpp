@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.hpp                                         :+:      :+:    :+:   */
+/*   handle_error.hpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu <yu@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: ychen2 <ychen2@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/30 18:03:43 by yu                #+#    #+#             */
-/*   Updated: 2024/05/30 18:07:18 by yu               ###   ########.fr       */
+/*   Created: 2024/08/24 20:07:38 by ychen2            #+#    #+#             */
+/*   Updated: 2024/08/26 17:16:30 by ychen2           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "LocationConfig.hpp"
-#include "ServerConfig.hpp"
-#include "Settings.hpp"
+#include "Server_helper.hpp"
+#include "State.hpp"
+#include <algorithm>
 
-void parse(std::vector< Settings > &settings, const std::string &filename);
+void handle_error(State &state, int statusCode, const std::string &context,
+                  Server &server);
