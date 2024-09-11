@@ -2,8 +2,8 @@
 <p align = "center"> <a href = https://github.com/Hotaruban><img webserv = "webserv" src = "./webservm.png"></a></p>
 
 Team members:
-<a href = https://github.com/PoissonC>Yu</a> (intra: <a href = https://profile.intra.42.fr/users/ychen>ychen</a>)
-<a href = https://github.com/kobewinona>Dima</a> (intra: <a href = https://profile.intra.42.fr/users/dklimkin>dklimkin</a>)
+- <a href = https://github.com/PoissonC>Yu</a> (intra: <a href = https://profile.intra.42.fr/users/ychen>ychen</a>)
+- <a href = https://github.com/kobewinona>Dima</a> (intra: <a href = https://profile.intra.42.fr/users/dklimkin>dklimkin</a>)
 - <a href = https://github.com/Hotaruban>Jeremy</a> (intra: <a href = https://profile.intra.42.fr/users/jhurpy>jhurpy</a>)
 
 ### The "Webserv" project at 42 school challenges participants to build a simple HTTP server from scratch, following the HTTP/1.1 protocol. This project provides an opportunity to explore network programming, socket management, and web server functionality in a real-world context.
