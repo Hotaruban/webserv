@@ -1,5 +1,5 @@
 <p align = "center">Webserv</p>
-<p align = "center"> <a href = https://github.com/Hotaruban/webserv><img webserv = "webserv" src = "./webservm.png"></a></p>
+<p align = "center"> <a href = https://github.com/Hotaruban><img webserv = "webserv" src = "./webservm.png"></a></p>
 
 Team members:
 <a href = https://github.com/PoissonC>Yu</a> (intra: <a href = https://profile.intra.42.fr/users/ychen>ychen</a>)
